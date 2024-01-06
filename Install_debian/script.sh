@@ -6,7 +6,7 @@ if [ "$EUID" -ne 0 ]; then
   exit 1
 fi
 
-# Demande de confirmation pour démarrer l'installation
+# Demande de confirmation pour démarrer
 read -p "# Voulez-vous démarrer l'installation ? (Y/n) " choice
 case "$(echo "$choice" | tr '[:upper:]' '[:lower:]')" in
   n) 
@@ -30,10 +30,10 @@ esac
  systemctl enable fail2ban
  systemctl start fail2ban
 
-# Configuration de fail2ban pour le journal systemd de SSH
+# Config fail2ban
  cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
 
-# Modifiez la configuration du jail.local pour SSH en adaptant les paramètres selon vos besoins
+# Modifier le fichier de configuration de fail2ban
  sed -i '/^\[sshd\]$/,/^\[/ {
   s|^#mode.*$|mode = normal|
   s|^port.*$|port = ssh|
@@ -48,7 +48,7 @@ esac
  sed -i 's/PermitRootLogin yes/PermitRootLogin no/' /etc/ssh/sshd_config
  systemctl restart ssh
 
-# Installation d'un firewall (UFW)
+# Installation d'un firewall
  apt install -y ufw
  ufw default deny incoming
  ufw default allow outgoing
