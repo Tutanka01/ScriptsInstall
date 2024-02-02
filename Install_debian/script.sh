@@ -68,17 +68,5 @@ case "$(echo "$docker_choice" | tr '[:upper:]' '[:lower:]')" in
     ;;
 esac
 
-# Demande d'ajout d'hôte à Zabbix
-read -p "# Voulez-vous ajouter cet hôte à Zabbix ? (Y/n) " zabbix_choice
-case "$(echo "$zabbix_choice" | tr '[:upper:]' '[:lower:]')" in
-  y) 
-    echo "# Exécution du script d'ajout d'hôte à Zabbix..."
-    curl -fsSL https://raw.githubusercontent.com/Tutanka01/ScriptsInstall/main/Zabbix/install_script.sh -o install_zabbix_script.sh
-     sh install_zabbix_script.sh
-    ;;
-  *) 
-    echo "# Ajout à Zabbix annulé."
-    ;;
-esac
 
 echo "# Script de post-installation terminé."
