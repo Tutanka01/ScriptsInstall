@@ -49,15 +49,26 @@ rm -f /etc/hostname
 rm -f /etc/ssh/ssh_host_*
 dpkg-reconfigure openssh-server
 
-# Demande du nouveau nom d'hôte (hostname)
-while true; do
-  read -p "Nouveau nom d'hôte (hostname) : " new_hostname
-  if [[ "$new_hostname" =~ ^[a-zA-Z0-9_-]+$ ]]; then
-    break
-  else
-    echo "Nom d'hôte invalide. Veuillez réessayer."
+# Gestion du hostname
+if [ -n "$1" ]; then
+  # Hostname fourni en paramètre
+  new_hostname="$1"
+  if [[ ! "$new_hostname" =~ ^[a-zA-Z0-9_-]+$ ]]; then
+    echo "Erreur : Nom d'hôte invalide '$new_hostname'"
+    exit 1
   fi
-done
+  echo "Utilisation du hostname fourni : $new_hostname"
+else
+  # Demande interactive du hostname
+  while true; do
+    read -p "Nouveau nom d'hôte (hostname) : " new_hostname
+    if [[ "$new_hostname" =~ ^[a-zA-Z0-9_-]+$ ]]; then
+      break
+    else
+      echo "Nom d'hôte invalide. Veuillez réessayer."
+    fi
+  done
+fi
 
 echo "$new_hostname" > /etc/hostname
 hostnamectl set-hostname "$new_hostname"
