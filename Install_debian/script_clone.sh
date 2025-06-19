@@ -95,4 +95,26 @@ unset HISTFILE
 rm -f /root/.bash_history
 find /home -type f -name ".bash_history" -exec rm -f {} \;
 
-echo "Réinitialisation terminée. Vous pouvez maintenant redémarrer la machine."
+echo "Réinitialisation terminée."
+echo ""
+
+# Demande de redémarrage interactif
+while true; do
+    echo "Il est recommandé de redémarrer la machine pour que tous les changements prennent effet."
+    read -p "Voulez-vous redémarrer maintenant ? (oui/non) : " choice
+    case "$choice" in
+        [Oo]ui|[Yy]es|[Yy])
+            echo "Redémarrage en cours..."
+            sleep 2
+            reboot
+            ;;
+        [Nn]on|[Nn]o|[Nn])
+            echo "Redémarrage annulé. N'oubliez pas de redémarrer manuellement plus tard."
+            echo "Vous pouvez redémarrer avec la commande : sudo reboot"
+            break
+            ;;
+        *)
+            echo "Réponse invalide. Veuillez répondre par 'oui' ou 'non'."
+            ;;
+    esac
+done
