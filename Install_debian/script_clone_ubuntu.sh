@@ -20,35 +20,25 @@ trap 'handle_error $LINENO' ERR
 echo "Mise à jour du système..."
 apt update && apt upgrade -y
 
-# Vérification et installation de uuidgen si nécessaire
-if ! command -v uuidgen &> /dev/null; then
-  echo "uuidgen n'est pas installé. Installation en cours..."
-  apt install -y uuid-runtime
-fi
-
 # Nettoyage des logs
 echo "Nettoyage des logs..."
 find /var/log -type f -exec truncate -s 0 {} \;
 
-# Regénération de l'UUID de la machine
-echo "Regénération de l'UUID de la machine..."
-uuidgen > /etc/machine-id
-truncate -s 0 /var/lib/dbus/machine-id
+# Réinitialisation de l'identifiant machine (regénéré au prochain démarrage)
+echo "Réinitialisation de l'identifiant machine..."
+truncate -s 0 /etc/machine-id
+rm -f /var/lib/dbus/machine-id
 ln -sf /etc/machine-id /var/lib/dbus/machine-id
 
 # Nettoyage des règles udev persistantes pour les interfaces réseau
 echo "Nettoyage des règles udev..."
 rm -f /etc/udev/rules.d/70-persistent-net.rules
 
-# Regénération de l'initramfs (si nécessaire)
-echo "Regénération de l'initramfs..."
-update-initramfs -u
-
 # Réinitialisation des configurations spécifiques
 echo "Réinitialisation des configurations spécifiques..."
 rm -f /etc/hostname
 rm -f /etc/ssh/ssh_host_*
-dpkg-reconfigure openssh-server
+ssh-keygen -A
 
 # Gestion du hostname
 if [ -n "$1" ]; then
@@ -97,4 +87,5 @@ rm -f /root/.bash_history
 find /home -type f -name ".bash_history" -exec rm -f {} \;
 
 echo "Réinitialisation terminée."
+echo "Redémarrez la VM clonée pour générer son nouvel identifiant machine et activer ses nouvelles clés SSH."
 echo ""
